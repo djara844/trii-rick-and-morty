@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import uvicorn, requests
 
 from models.schema import QueryApi
+from hooks.compress_zip import compress_zip
 
 
 # Instance FastApii
@@ -26,8 +27,11 @@ def rick_and_morty(query_api: QueryApi):
     response = requests.get(API_URL, params=query_api)
     response = response.json()
 
+    # We validate if the download option is True, and the function to encrypt the data is called encrypt(data)
+    if query_api.download_zip is True:
+        compress_zip(response)
     return response
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8000, reload=True)
-
